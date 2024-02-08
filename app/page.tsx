@@ -27,7 +27,7 @@ export default function Home() {
 
   useEffect(() => {
     getFaucetBalance().then(balance => setFaucetBalance(balance));
-  }, []);
+  }, [airdropResult]);
 
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-between p-24">
