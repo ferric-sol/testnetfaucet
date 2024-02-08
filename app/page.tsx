@@ -7,7 +7,7 @@ import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction, Sy
 
 
 export default function Home() {
-  const faucetAddress = "9CfWVxa3nZwXrq2PK1czpMmJzFHmz89XpXW2cfCS3iDK";
+  const faucetAddress = process.env.FAUCET_ADDRESS;
   const [airdropResult, setAirdropResult] = useState('');
   const [faucetBalance, setFaucetBalance] = useState('');
 
