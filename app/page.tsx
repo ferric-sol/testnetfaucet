@@ -18,6 +18,7 @@ export default function Home() {
     setAirdropResult(result);
   }
   const getFaucetBalance = async () => {
+    if(!faucetAddress) return 'No faucet!';
     const connection = new Connection(clusterApiUrl('testnet'), 'confirmed');
     const faucetPublicKey = new PublicKey(faucetAddress);
     const balanceInLamports = await connection.getBalance(faucetPublicKey);
@@ -34,6 +35,9 @@ export default function Home() {
       <div className="self-end font-mono text-sm">
         <p className="border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           <code className="font-bold">Solana</code>&nbsp; Testnet Faucet
+        </p>
+        <p className="border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
+          <code className="font-bold"><a href="https://github.com/ferric-sol/testnetfaucet">Fork on Github</a></code>
         </p>
       </div>
 
