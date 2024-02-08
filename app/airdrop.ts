@@ -2,7 +2,7 @@
 
 import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair, sendAndConfirmTransaction } from '@solana/web3.js';
 import { unstable_noStore as noStore } from 'next/cache';
-
+import { kv } from "@vercel/kv";
 
 export default async function airdrop(formData: FormData) {
     noStore(); // Opt-into dynamic rendering
@@ -12,6 +12,19 @@ export default async function airdrop(formData: FormData) {
       if (!walletAddress) {
         throw new Error('Wallet address is required');
       }
+
+      const lastAirdropTimestamp = await Number(kv.get(walletAddress as string));
+      if (lastAirdropTimestamp) {
+        const oneHourAgo = Date.now() - 60 * 60 * 1000;
+        if (lastAirdropTimestamp > oneHourAgo) {
+          const minutesLeft = Math.ceil((lastAirdropTimestamp - oneHourAgo) / 60000);
+          return `Try again in ${minutesLeft} minutes`;
+        } else {
+          kv.set(walletAddress as string, Date.now());
+        }
+
+      }
+
       const secretKey = process.env.SENDER_SECRET_KEY;
 
       if(!secretKey) return 'Airdrop failed';
