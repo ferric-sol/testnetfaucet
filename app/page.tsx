@@ -2,13 +2,14 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import airdrop from "@/app/airdrop"
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair, sendAndConfirmTransaction } from '@solana/web3.js';
 
 
 export default function Home() {
   const faucetAddress = "9CfWVxa3nZwXrq2PK1czpMmJzFHmz89XpXW2cfCS3iDK";
-  const faucetBalance = "100 SOL";
   const [airdropResult, setAirdropResult] = useState('');
+  const [faucetBalance, setFaucetBalance] = useState('');
 
   const handleSubmit = async (formdata: FormData) => {
     const processingText = "Airdrop processing...";
@@ -16,6 +17,17 @@ export default function Home() {
     const result = await airdrop(formdata);
     setAirdropResult(result);
   }
+  const getFaucetBalance = async () => {
+    const connection = new Connection(clusterApiUrl('testnet'), 'confirmed');
+    const faucetPublicKey = new PublicKey(faucetAddress);
+    const balanceInLamports = await connection.getBalance(faucetPublicKey);
+    const balanceInSol = balanceInLamports / LAMPORTS_PER_SOL;
+    return balanceInSol.toFixed(2) + ' SOL';
+  }
+
+  useEffect(() => {
+    getFaucetBalance().then(balance => setFaucetBalance(balance));
+  }, []);
 
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-between p-24">
