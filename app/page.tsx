@@ -1,8 +1,10 @@
+"use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import airdrop from "@/app/airdrop"
+
 
 export default function Home() {
-  // Placeholder content, replace with actual data fetching logic
   const faucetAddress = "9CfWVxa3nZwXrq2PK1czpMmJzFHmz89XpXW2cfCS3iDK";
   const faucetBalance = "100 SOL";
 
@@ -14,24 +16,36 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="flex flex-col items-center justify-center space-y-4">
-        <div className="relative flex place-items-center before:absolute before:h-[301px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
+      <form action={airdrop} className="flex flex-col items-center justify-center space-y-4">
+        <div>
           Enter wallet address to get 1 testnet SOL airdropped
         </div>
-        <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-          <Input placeholder="Enter testnet wallet address" />
-          <Button type="submit">Airdrop!</Button>
+        <div className="flex items-center space-x-2">
+          <Input
+            id="walletAddress"
+            name="walletAddress"
+            placeholder="Enter testnet wallet address"
+            className="w-full px-4 py-2 border border-gray-300 rounded-l-md"
+            required
+          />
+          <Button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded-r-md"
+          >
+            Airdrop!
+          </Button>
         </div>
-        {/* New div for displaying the faucet address and balance */}
-        <div className="text-center">
+        <div className="flex items-center space-x-2">
           <p>To fill up the faucet, send more <b>testnet</b> sol to: {faucetAddress}</p>
+        </div>
+        <div className="flex items-center space-x-2">
           <p>Current faucet balance is: {faucetBalance}</p>
         </div>
-      </div>
 
+      </form>
       <div className="self-center w-full font-mono text-sm text-center">
         <p className="bg-transparent">
-          Powered by Stakeware
+          Created by <a href="https://x.com/ferric">@ferric</a>
         </p>
       </div>
     </main>
