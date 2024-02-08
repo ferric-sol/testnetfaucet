@@ -47,6 +47,7 @@ export default function Home() {
             name="walletAddress"
             placeholder="Enter testnet wallet address"
             className="w-full px-4 py-2 border border-gray-300 rounded-l-md"
+            onFocus={(e) => setAirdropResult('')}
             required
           />
           <Button
