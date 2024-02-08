@@ -2,11 +2,20 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import airdrop from "@/app/airdrop"
+import { useState } from "react";
 
 
 export default function Home() {
   const faucetAddress = "9CfWVxa3nZwXrq2PK1czpMmJzFHmz89XpXW2cfCS3iDK";
   const faucetBalance = "100 SOL";
+  const [airdropResult, setAirdropResult] = useState('');
+
+  const handleSubmit = async (formdata: FormData) => {
+    const processingText = "Airdrop processing...";
+    setAirdropResult(processingText);
+    const result = await airdrop(formdata);
+    setAirdropResult(result);
+  }
 
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-between p-24">
@@ -16,7 +25,7 @@ export default function Home() {
         </p>
       </div>
 
-      <form action={airdrop} className="flex flex-col items-center justify-center space-y-4">
+      <form action={handleSubmit} className="flex flex-col items-center justify-center space-y-4">
         <div>
           Enter wallet address to get 1 testnet SOL airdropped
         </div>
@@ -41,6 +50,10 @@ export default function Home() {
         <div className="flex items-center space-x-2">
           <p>Current faucet balance is: {faucetBalance}</p>
         </div>
+        <div className="flex items-center space-x-2">
+          <p>{airdropResult}</p>
+        </div>
+
 
       </form>
       <div className="self-center w-full font-mono text-sm text-center">
