@@ -1,15 +1,19 @@
 "use server";
 
 import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair, sendAndConfirmTransaction } from '@solana/web3.js';
+import { serialize } from 'v8';
 export default async function airdrop(formData: FormData) {
     const walletAddress = formData.get('walletAddress');
     try { 
-    if (!walletAddress) {
-      throw new Error('Wallet address is required');
-    }
+      if (!walletAddress) {
+        throw new Error('Wallet address is required');
+      }
+      const secretKey = process.env.SENDER_SECRET_KEY;
+
+      if(!secretKey) return 'Airdrop failed';
       // Convert the secret key from an environment variable to a Uint8Array
       const secretKeyUint8Array = new Uint8Array(
-        process.env.SENDER_SECRET_KEY.split(',').map((num) => parseInt(num, 10))
+        secretKey.split(',').map((num) => parseInt(num, 10))
       );
 
       // Create a keypair from the secret key
