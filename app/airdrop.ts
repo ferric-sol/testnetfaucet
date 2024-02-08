@@ -13,7 +13,6 @@ export default async function airdrop(formData: FormData) {
         throw new Error('Wallet address is required');
       }
       const secretKey = process.env.SENDER_SECRET_KEY;
-      console.log(secretKey);
 
       if(!secretKey) return 'Airdrop failed';
       // Convert the secret key from an environment variable to a Uint8Array
