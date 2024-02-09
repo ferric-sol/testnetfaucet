@@ -29,6 +29,9 @@ export default async function airdrop(formData: FormData) {
       const secretKey = process.env.SENDER_SECRET_KEY;
 
       if(!secretKey) return 'Airdrop failed';
+
+      const airdropAmount = Number(process.env.AIRDROP_AMOUNT) || 1;
+      const airdropAmountLamports = airdropAmount*LAMPORTS_PER_SOL; // Send 1 SOL
       // Convert the secret key from an environment variable to a Uint8Array
       const secretKeyUint8Array = new Uint8Array(
         secretKey.split(',').map((num) => parseInt(num, 10))
@@ -45,7 +48,7 @@ export default async function airdrop(formData: FormData) {
         SystemProgram.transfer({
           fromPubkey: senderKeypair.publicKey,
           toPubkey: new PublicKey(walletAddress as string),
-          lamports: LAMPORTS_PER_SOL // Send 1 SOL
+          lamports: airdropAmountLamports
         })
       );
 

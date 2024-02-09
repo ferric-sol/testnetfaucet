@@ -5,6 +5,7 @@ This is a Solana Faucet airdropper
 You need two environment variables in your .env.development.local file and on vercel:
 - NEXT_PUBLIC_FAUCET_ADDRESS
 - SENDER_SECRET_KEY
+- AIRDROP_AMOUNT
 
 First, run the development server:
 

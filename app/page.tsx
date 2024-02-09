@@ -9,13 +9,14 @@ import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction, Sy
 export default function Home() {
   const faucetAddress = process.env.NEXT_PUBLIC_FAUCET_ADDRESS;
   const [airdropResult, setAirdropResult] = useState('');
+  const [processingText, setProcessingText] = useState('');
   const [faucetBalance, setFaucetBalance] = useState('');
 
   const handleSubmit = async (formdata: FormData) => {
-    const processingText = "Airdrop processing...";
-    setAirdropResult(processingText);
+    setProcessingText("Airdrop processing...");
     const result = await airdrop(formdata);
     setAirdropResult(result);
+    setProcessingText("");
   }
   const getFaucetBalance = async () => {
     if(!faucetAddress) return 'No faucet!';
@@ -69,6 +70,9 @@ export default function Home() {
         </div>
         <div className="flex items-center space-x-2">
           <p>{airdropResult}</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <p>{processingText}</p>
         </div>
 
 
