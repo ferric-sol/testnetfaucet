@@ -74,7 +74,13 @@ export default function Home() {
         <div className="flex items-center space-x-2">
           <p>{processingText}</p>
         </div>
-
+        <div className="flex items-center space-x-2">
+          <p>
+            Other Testnet Faucets:
+          </p>
+          <p><a href="https://solfaucet">SOLFaucet</a></p>
+          <p><a href="https://faucet.quicknode.com/solana/testnet">Quicknode</a></p>
+        </div>
 
       </form>
       <div className="self-center w-full font-mono text-sm text-center">
