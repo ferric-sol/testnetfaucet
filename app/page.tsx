@@ -78,7 +78,7 @@ export default function Home() {
           <p>
             Other Testnet Faucets:
           </p>
-          <p><a href="https://solfaucet">SOLFaucet</a></p>
+          <p><a href="https://solfaucet.com">SOLFaucet</a></p>
           <p><a href="https://faucet.quicknode.com/solana/testnet">Quicknode</a></p>
         </div>
 
