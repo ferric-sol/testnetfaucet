@@ -65,6 +65,9 @@ export default function Home() {
             Airdrop!
           </Button>
         </div>
+        <div className="flex items-center space-x-2">
+          <p>Send donation <b>testnet</b> sol to: {faucetAddress}</p>
+        </div>
         {faucetEmpty && (
           <div className="flex items-center space-x-2">
             <p>The faucet is empty! To fill up the faucet, send more <b>testnet</b> sol to: {faucetAddress}</p>
