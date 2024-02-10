@@ -8,9 +8,11 @@ import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction, Sy
 
 export default function Home() {
   const faucetAddress = process.env.NEXT_PUBLIC_FAUCET_ADDRESS;
+  const airdropAmount = process.env.NEXT_PUBLIC_AIRDROP_AMOUNT;
   const [airdropResult, setAirdropResult] = useState('');
   const [processingText, setProcessingText] = useState('');
   const [faucetBalance, setFaucetBalance] = useState('');
+  const [faucetEmpty, setFaucetEmpty] = useState(false);
 
   const handleSubmit = async (formdata: FormData) => {
     setProcessingText("Airdrop processing...");
@@ -24,6 +26,7 @@ export default function Home() {
     const faucetPublicKey = new PublicKey(faucetAddress);
     const balanceInLamports = await connection.getBalance(faucetPublicKey);
     const balanceInSol = balanceInLamports / LAMPORTS_PER_SOL;
+    if(parseInt(balanceInSol.toFixed(2)) < 2) setFaucetEmpty(true);
     return balanceInSol.toFixed(2) + ' SOL';
   }
 
@@ -44,7 +47,7 @@ export default function Home() {
 
       <form action={handleSubmit} className="flex flex-col items-center justify-center space-y-4">
         <div>
-          Enter wallet address to get 1 testnet SOL airdropped
+          Enter wallet address to get {airdropAmount} testnet SOL airdropped
         </div>
         <div className="flex items-center space-x-2">
           <Input
@@ -62,12 +65,16 @@ export default function Home() {
             Airdrop!
           </Button>
         </div>
-        <div className="flex items-center space-x-2">
-          <p>To fill up the faucet, send more <b>testnet</b> sol to: {faucetAddress}</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <p>Current faucet balance is: {faucetBalance}</p>
-        </div>
+        {faucetEmpty && (
+          <div className="flex items-center space-x-2">
+            <p>The faucet is empty! To fill up the faucet, send more <b>testnet</b> sol to: {faucetAddress}</p>
+          </div>
+        )}
+        {!faucetEmpty && (
+          <div className="flex items-center space-x-2">
+            <p>Current faucet balance is: {faucetBalance}</p>
+          </div>
+        )}
         <div className="flex items-center space-x-2">
           <p>{airdropResult}</p>
         </div>
