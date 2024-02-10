@@ -87,6 +87,7 @@ export default function Home() {
         </p>
         <p><a href="https://solfaucet.com">SOLFaucet</a></p>
         <p><a href="https://faucet.quicknode.com/solana/testnet">Quicknode</a></p>
+        <p><a href="https://solana.com/developers/guides/getstarted/solana-token-airdrop-and-faucets">Solana Guides Faucet List</a></p>
       </div>
 
       <div className="self-center w-full font-mono text-sm text-center">
