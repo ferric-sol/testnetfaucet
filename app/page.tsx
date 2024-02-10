@@ -10,16 +10,14 @@ export default function Home() {
   const faucetAddress = process.env.NEXT_PUBLIC_FAUCET_ADDRESS;
   const airdropAmount = process.env.NEXT_PUBLIC_AIRDROP_AMOUNT;
   const [airdropResult, setAirdropResult] = useState('');
-  const [processingText, setProcessingText] = useState('');
   const [faucetBalance, setFaucetBalance] = useState('');
   const [faucetEmpty, setFaucetEmpty] = useState(false);
 
   const handleSubmit = async (formdata: FormData) => {
-    setProcessingText("Airdrop processing...");
     const result = await airdrop(formdata);
     setAirdropResult(result);
-    setProcessingText("");
   }
+
   const getFaucetBalance = async () => {
     if(!faucetAddress) return 'No faucet!';
     const connection = new Connection(clusterApiUrl('testnet'), 'confirmed');
@@ -61,6 +59,7 @@ export default function Home() {
           <Button
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded-r-md"
+            onClick={(e) => setAirdropResult('Processing...')}
           >
             Airdrop!
           </Button>
@@ -79,20 +78,17 @@ export default function Home() {
           </div>
         )}
         <div className="flex items-center space-x-2">
-          <p>{airdropResult}</p>
+          <p>Airdrop status: {airdropResult}</p>
         </div>
-        <div className="flex items-center space-x-2">
-          <p>{processingText}</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <p>
-            Other Testnet Faucets:
-          </p>
-          <p><a href="https://solfaucet.com">SOLFaucet</a></p>
-          <p><a href="https://faucet.quicknode.com/solana/testnet">Quicknode</a></p>
-        </div>
-
       </form>
+      <div className="flex items-center space-x-2">
+        <p>
+          Other Testnet Faucets:
+        </p>
+        <p><a href="https://solfaucet.com">SOLFaucet</a></p>
+        <p><a href="https://faucet.quicknode.com/solana/testnet">Quicknode</a></p>
+      </div>
+
       <div className="self-center w-full font-mono text-sm text-center">
         <p className="bg-transparent">
           Created by <a href="https://x.com/ferric">@ferric</a>
