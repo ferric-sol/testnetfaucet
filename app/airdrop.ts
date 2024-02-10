@@ -22,9 +22,7 @@ export default async function airdrop(formData: FormData) {
       if (lastAirdropTimestamp && lastAirdropTimestamp > oneHourAgo) {
         const minutesLeft = Math.ceil((lastAirdropTimestamp - oneHourAgo) / 60000);
         return `Try again in ${minutesLeft} minutes`;
-      } else {
-        kv.set(walletAddress as string, Date.now());
-      }
+      } 
 
       const secretKey = process.env.SENDER_SECRET_KEY;
 
@@ -58,6 +56,8 @@ export default async function airdrop(formData: FormData) {
         transaction,
         [senderKeypair]
       );
+
+      kv.set(walletAddress as string, Date.now());
 
       // The transaction is now sent and confirmed, signature is the transaction id
       return 'Airdrop successful';
