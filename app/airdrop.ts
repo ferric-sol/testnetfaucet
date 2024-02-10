@@ -10,11 +10,11 @@ export default async function airdrop(formData: FormData) {
     const walletAddress = formData.get('walletAddress');
     try { 
 
-      if (!walletAddress) {
+      if (!walletAddress || walletAddress === null) {
         throw new Error('Wallet address is required');
       }
 
-      const walletAddressString = walletAddress !== null ? walletAddress?.toString() : '';
+      const walletAddressString = walletAddress?.toString();
       const lastAirdropTimestampString = String(await kv.get(walletAddressString));
       const lastAirdropTimestamp = lastAirdropTimestampString ? parseInt(lastAirdropTimestampString) : null;
       const oneHourAgo = Date.now() - 60 * 60 * 1000;
