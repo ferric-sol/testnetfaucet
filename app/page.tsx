@@ -43,6 +43,11 @@ export default function Home() {
             <a href="https://github.com/ferric-sol/testnetfaucet">Fork on Github</a>
           </code>
         </p>
+        <p className="font-mono text-sm lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
+          <code className="font-bold">
+            <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fferric-sol%2Ftestnetfaucet&env=NEXT_PUBLIC_FAUCET_ADDRESS,SENDER_SECRET_KEY,NEXT_PUBLIC_AIRDROP_AMOUNT&envDescription=Faucet%20address%2C%20airdrop%20amount%2C%20and%20the%20faucet%27s%20private%20key%20are%20all%20that%20you%20need&project-name=sol-testnet-faucet&repository-name=sol-testnet-faucet&redirect-url=https%3A%2F%2Ftestnetfaucet.org&demo-title=Testnet%20Faucet&demo-description=A%20faucet%20for%20getting%20testnet%20tokens%20on%20Solana&demo-url=https%3A%2F%2Ftestnetfaucet.org&demo-image=https%3A%2F%2Fwww.stakeware.xyz%2Flogo.webp">Deploy on Vercel</a>
+          </code>
+        </p>
       </header>
 
       <form action={handleSubmit} className="flex flex-col items-center justify-center space-y-4 w-full max-w-2xl px-4">
