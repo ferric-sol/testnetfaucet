@@ -6,6 +6,28 @@ Fill up your NEXT_PUBLIC_FAUCET_ADDRESS with some SOL, set the secret key and th
 
 ## Getting Started
 
+1. Generate your faucet key
+
+```bash
+solana-keygen new --no-bip39-passphrase -o faucetkey.json
+```
+
+2. Copy faucetkey.json (privatekey) and paste it into SENDER_SECRET_KEY on vercel (or in your .env.development.local)
+
+```bash
+cat faucetkey.json
+```
+
+3. Copy faucet address (pubkey) and paste it into NEXT_PUBLIC_FAUCET_ADDRESS 
+
+```bash
+solana-keygen pubkey faucetkey.json
+```
+
+4. Set NEXT_PUBLIC_AIRDROP_AMOUNT
+
+5. Deploy
+
 You need three environment variables in your .env.development.local file and on vercel:
 - NEXT_PUBLIC_FAUCET_ADDRESS - the address of your faucet account
 - SENDER_SECRET_KEY - the secret key to allow the app to send airdrops from the faucet account above
