@@ -70,7 +70,7 @@ export default function Home() {
           Send donation <strong>testnet</strong> sol to: {faucetAddress}
         </p>
         <p className="text-sm my-2">
-          Current faucet balance is: {faucetBalance} SOL
+          Current faucet balance is: {faucetBalance}
         </p>
         <p className="text-sm my-2">
           Airdrop status: {airdropResult}
