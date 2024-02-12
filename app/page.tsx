@@ -89,6 +89,9 @@ export default function Home() {
         <p className="text-xs mt-2">
           Created by <a href="https://x.com/ferric" target="_blank" rel="noopener noreferrer">@ferric</a>
         </p>
+        <p className="text-xs mt-2">
+          Designed by <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer">ChatGPT</a>
+        </p>
       </footer>
     </main>
 
