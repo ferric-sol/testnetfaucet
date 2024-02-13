@@ -17,7 +17,9 @@ export default async function airdrop(formData: FormData) {
       const walletAddressString = walletAddress?.toString();
       const lastAirdropTimestampString = String(await kv.get(walletAddressString));
       const lastAirdropTimestamp = lastAirdropTimestampString ? parseInt(lastAirdropTimestampString) : null;
-      const oneHourAgo = Date.now() - 60 * 60 * 1000;
+
+      const TIMEOUT_HOURS = Number(process.env.TIMEOUT_HOURS) || 24;
+      const oneHourAgo = Date.now() - TIMEOUT_HOURS * 60 * 60 * 1000;
 
       if (lastAirdropTimestamp && lastAirdropTimestamp > oneHourAgo) {
         const minutesLeft = Math.ceil((lastAirdropTimestamp - oneHourAgo) / 60000);
