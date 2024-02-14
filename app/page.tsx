@@ -86,7 +86,7 @@ export default function Home() {
         [<a href="https://solfaucet.com" target="_blank" rel="noopener noreferrer">SOLFaucet</a>]&nbsp;
         [<a href="https://faucet.quicknode.com/solana/testnet" target="_blank" rel="noopener noreferrer">Quicknode</a>]&nbsp;
         [<a href="https://solana.com/developers/guides/getstarted/solana-token-airdrop-and-faucets" target="_blank" rel="noopener noreferrer">Faucet List</a>]&nbsp;
-        [<a href="https://facuet.solana.com" target="_blank" rel="noopener noreferrer">Official Solana.com Faucet</a>]&nbsp;
+        [<a href="https://faucet.solana.com" target="_blank" rel="noopener noreferrer">Official Solana.com Faucet</a>]&nbsp;
         [<a href="https://solanatools.xyz/faucet/testnet.html" target="_blank" rel="noopener noreferrer">SolanaTools Faucet</a>]&nbsp;
         <p className="text-xs mt-2">
           Created by <a href="https://x.com/ferric" target="_blank" rel="noopener noreferrer">@ferric</a>
