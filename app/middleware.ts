@@ -16,6 +16,7 @@ export const config = {
 export default async function middleware(request: NextRequest) {
   // You could alternatively limit based on user ID or similar
   const ip = request.ip ?? '127.0.0.1';
+  await kv.incr(`ip_${ip}`);
   const { success, pending, limit, reset, remaining } = await ratelimit.limit(
     ip
   );
