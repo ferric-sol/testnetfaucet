@@ -5,7 +5,7 @@ import { kv } from '@vercel/kv';
 const ratelimit = new Ratelimit({
   redis: kv,
   // 5 requests from the same IP in 10 seconds
-  limiter: Ratelimit.slidingWindow(5, '10 s'),
+  limiter: Ratelimit.slidingWindow(2, '24 h'),
 });
 
 // Define which routes you want to rate limit
@@ -17,7 +17,8 @@ export default async function middleware(request: NextRequest) {
   // You could alternatively limit based on user ID or similar
   const ip = request.ip ?? '127.0.0.1';
   await kv.incr(`ip_${ip}`);
-  console.log(await kv.get(`ip_${ip}`))
+  console.log(`ip: ${ip}`);
+  console.log(await kv.get(`ip_${ip}`));
   const { success, pending, limit, reset, remaining } = await ratelimit.limit(
     ip
   );
