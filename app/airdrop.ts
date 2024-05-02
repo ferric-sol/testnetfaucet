@@ -24,13 +24,12 @@ export default async function airdrop(formData: FormData) {
       const walletAddressString = walletAddress?.toString();
       // Check if the wallet address is a SFDP testnet validator using
       // fetch to https://api.solana.org/api/validators/details?pk=41cnC4X53ijfbYkVGoU69Qw7qRzGZ4MMbzTXvYk5xBm2&epoch=599
-      // const sfdp_url = `https://api.solana.org/api/validators/details?pk=${walletAddressString}&epoch=${epochInfo.epoch-2}`;
-      // const sfdp_url_2 = `https://api.solana.org/api/validators/details?pk=${walletAddressString}&epoch=${epochInfo.epoch-3}`;
+      const sfdp_url = `https://api.solana.org/api/validators/walletAddressString}&epoch`
 
-      // const sfdp_validator = await fetch(sfdp_url);
-      // const sfdp_validator_json = await sfdp_validator.json();
+      const sfdp_validator = await fetch(sfdp_url);
+      const sfdp_validator_json = await sfdp_validator.json();
 
-      // if(!sfdp_validator_json || !sfdp_validator_json.state || !sfdp_validator_json.state as unknown === 'Approved') return 'Wallet address is not a SFDP testnet validator';
+      if(!sfdp_validator_json || !sfdp_validator_json.kycStatus || !sfdp_validator_json.kycStatus as unknown === 'KYC_VALID') return 'Wallet address is not a SFDP testnet validator';
 
       const lastAirdropTimestampString = String(await kv.get(walletAddressString));
       const lastAirdropTimestamp = lastAirdropTimestampString ? parseInt(lastAirdropTimestampString) : null;
