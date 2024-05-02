@@ -24,7 +24,7 @@ export default async function airdrop(formData: FormData) {
       const walletAddressString = walletAddress?.toString();
       // Check if the wallet address is a SFDP testnet validator using
       // fetch to https://api.solana.org/api/validators/details?pk=41cnC4X53ijfbYkVGoU69Qw7qRzGZ4MMbzTXvYk5xBm2&epoch=599
-      const sfdp_url = `https://api.solana.org/api/validators/details?pk=${walletAddressString}&epoch=${epochInfo.epoch-1}`;
+      const sfdp_url = `https://api.solana.org/api/validators/details?pk=${walletAddressString}&epoch=${epochInfo.epoch-3}`;
 
       const sfdp_validator = await fetch(sfdp_url);
       const sfdp_validator_json = await sfdp_validator.json();
