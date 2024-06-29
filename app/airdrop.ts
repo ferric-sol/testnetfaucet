@@ -28,7 +28,7 @@ export default async function airdrop(formData: FormData) {
 
       const sfdp_validator = await fetch(sfdp_url);
       const sfdp_validator_json = await sfdp_validator.json();
-      const limit_sfdp = process.env.LIMIT_SFDP === 1 || false;
+      const limit_sfdp = process.env.LIMIT_SFDP === '1' || false;
 
 
       if(limit_sfdp && (!sfdp_validator_json || !sfdp_validator_json.kycStatus || !sfdp_validator_json.kycStatus as unknown === 'KYC_VALID')) return 'Wallet address is not a SFDP testnet validator';
