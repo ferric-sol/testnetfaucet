@@ -2,9 +2,8 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import airdrop from "@/app/airdrop"
-import { useState, useEffect } from "react";
-import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair, sendAndConfirmTransaction } from '@solana/web3.js';
-
+import { useState, useEffect, useCallback } from "react";
+import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 export default function Home() {
   const faucetAddress = process.env.NEXT_PUBLIC_FAUCET_ADDRESS;
@@ -12,11 +11,72 @@ export default function Home() {
   const [airdropResult, setAirdropResult] = useState('');
   const [faucetBalance, setFaucetBalance] = useState('');
   const [faucetEmpty, setFaucetEmpty] = useState(false);
+  const [address, setAddress] = useState('');
+  const [isValid, setIsValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (formdata: FormData) => {
-    const result = await airdrop(formdata);
-    setAirdropResult(result);
-  }
+  const validateSolanaAddress = useCallback((walletAddress: string) => {
+    if (!walletAddress) {
+      setIsValid(false);
+      setErrorMessage('');
+      return;
+    }
+
+    try {
+      const publicKey = new PublicKey(walletAddress);
+      if (!PublicKey.isOnCurve(publicKey.toBytes())) {
+        setIsValid(false);
+        setErrorMessage('Invalid Solana address.');
+        return;
+      }
+      setIsValid(true);
+      setErrorMessage('');
+    } catch (error) {
+      setIsValid(false);
+      setErrorMessage('Invalid wallet address.');
+    }
+  }, []);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      validateSolanaAddress(address);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [address, validateSolanaAddress]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid) return;
+
+    setIsLoading(true);
+    setErrorMessage('');
+    setAirdropResult('Processing...');
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/request`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ walletAddress: address }),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Rate limit exceeded.');
+      }
+
+      setAirdropResult(`Airdrop Successful! Transaction Hash: ${data.txHash}`);
+      setAddress('');
+    } catch (error: any) {
+      setErrorMessage(error.message || 'Airdrop failed. Please try again.');
+      setAirdropResult('');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getFaucetBalance = async () => {
     if(!faucetAddress) return 'No faucet!';
@@ -50,26 +110,30 @@ export default function Home() {
         </p>
       </header>
 
-      <form action={handleSubmit} className="flex flex-col items-center justify-center space-y-4 w-full max-w-2xl px-4">
+      <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center space-y-4 w-full max-w-2xl px-4">
         <div className="text-center mb-2">
           Enter wallet address to get {airdropAmount} testnet SOL airdropped
         </div>
-        <div className="flex w-full">
-          <input
-            id="walletAddress"
-            name="walletAddress"
-            placeholder="Enter testnet wallet address"
-            className="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            onFocus={(e) => setAirdropResult('')}
-            required
-          />
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:ring-4 focus:ring-blue-300"
-            onClick={(e) => setAirdropResult('Processing...')}
-          >
-            Airdrop!
-          </button>
+        <div className="flex flex-col w-full space-y-2">
+          <div className="flex w-full">
+            <input
+              id="walletAddress"
+              name="walletAddress"
+              placeholder="Enter testnet wallet address"
+              className="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 disabled:opacity-50"
+              disabled={!isValid || isLoading}
+            >
+              {isLoading ? 'Processing...' : 'Airdrop!'}
+            </button>
+          </div>
+          {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
         </div>
         <p className="text-sm my-2">
           Send donation <strong>testnet</strong> sol to: {faucetAddress}
@@ -77,9 +141,11 @@ export default function Home() {
         <p className="text-sm my-2">
           Current faucet balance is: {faucetBalance}
         </p>
-        <p className="text-sm my-2">
-          Airdrop status: {airdropResult}
-        </p>
+        {airdropResult && (
+          <p className={`text-sm my-2 ${airdropResult.includes('Successful') ? 'text-green-500' : ''}`}>
+            {airdropResult}
+          </p>
+        )}
       </form>
       <footer className="self-stretch text-center font-mono text-sm mt-4">
         Other Testnet Faucets: &nbsp;        
@@ -96,6 +162,5 @@ export default function Home() {
         </p>
       </footer>
     </main>
-
   );
 }

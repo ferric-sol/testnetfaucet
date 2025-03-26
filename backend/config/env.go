@@ -1,0 +1,77 @@
+package config
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"strconv"
+
+	"github.com/lpernett/godotenv"
+)
+
+type Config struct {
+	PublicHost              string
+	Port                    string
+	DBUser                  string
+	DBPassword              string
+	DBAddress               string
+	DBName                  string
+	JWTExpirationInSeconds  int64
+	JWTSecret               string
+	FundingWalletPrivateKey string
+	SOLTransactionLamports  uint64
+}
+
+var Envs = initConfig()
+
+func initConfig() Config {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	return Config{
+		PublicHost:              getEnv("PUBLIC_HOST", "http:"),
+		Port:                    getEnv("PORT", "8080"),
+		DBUser:                  getEnv("DB_USER", "root"),
+		DBPassword:              getEnv("DB_PASSWORD", ""),
+		DBAddress:               fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
+		DBName:                  getEnv("DB_NAME", "solana-faucet-api"),
+		JWTSecret:               getEnv("JWT_SECRET", "not-secret-secret-anymore?"),
+		JWTExpirationInSeconds:  getEnvAsInt("JWT_EXP", 3600*24*7),
+		FundingWalletPrivateKey: getEnv("FUNDING_WALLET_PRIVATE_KEY", "............."),
+		SOLTransactionLamports:  getEnvAsUint64("SOL_TRANSACTION_LAMPORTS", 100000), // Default to 100,000 lamports (0.0001 SOL)
+	}
+}
+
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+
+	return fallback
+}
+
+func getEnvAsInt(key string, fallback int64) int64 {
+	if value, ok := os.LookupEnv(key); ok {
+		i, err := strconv.ParseInt(value, 10, 64)
+		if err != nil {
+			return fallback
+		}
+
+		return i
+	}
+
+	return fallback
+}
+
+func getEnvAsUint64(key string, fallback uint64) uint64 {
+	if value, ok := os.LookupEnv(key); ok {
+		u, err := strconv.ParseUint(value, 10, 64)
+		if err != nil {
+			return fallback
+		}
+		return u
+	}
+	return fallback
+}
