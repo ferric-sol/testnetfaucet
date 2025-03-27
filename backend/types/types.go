@@ -4,7 +4,8 @@ import "time"
 
 type FaucetRequestStore interface {
 	RequestSOL(ipAddress, walletAddress string) (string, error)
-	HasRequested(ipAddress string) (bool, error)
+	// HasRequested(ipAddress string) (bool, error)
+	GetLastRequestTime(ipAddress string) (time.Time, error)
 }
 
 type FaucetRequestPayload struct {

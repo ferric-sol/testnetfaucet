@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"solana-faucet-api/config"
+	"time"
 )
 
 type Store struct {
@@ -15,25 +16,56 @@ func NewStore(db *sql.DB) *Store {
 }
 
 // Check if IP has requested SOL in the last 24 hours
-func (s *Store) HasRequested(ipAddress string) (bool, error) {
-	var count int
-	err := s.db.QueryRow("SELECT COUNT(*) FROM faucet_requests WHERE ip_address = ? AND created_at >= NOW() - INTERVAL 1 DAY", ipAddress).Scan(&count)
+// func (s *Store) HasRequested(ipAddress string) (bool, error) {
+// 	var count int
+// 	err := s.db.QueryRow("SELECT COUNT(*) FROM faucet_requests WHERE ip_address = ? AND created_at >= NOW() - INTERVAL 1 DAY", ipAddress).Scan(&count)
+// 	if err != nil {
+// 		return false, err
+// 	}
+
+// 	return count > 0, nil
+// }
+
+func (s *Store) GetLastRequestTime(ipAddress string) (time.Time, error) {
+	var lastRequestTime time.Time
+	err := s.db.QueryRow(
+		"SELECT MAX(created_at) FROM faucet_requests WHERE ip_address = ?",
+		ipAddress).Scan(&lastRequestTime)
+
 	if err != nil {
-		return false, err
+		// If no previous request, return a zero time
+		if err == sql.ErrNoRows {
+			return time.Time{}, nil
+		}
+		return time.Time{}, err
 	}
 
-	return count > 0, nil
+	return lastRequestTime, nil
 }
 
 // Insert a new faucet request
 func (s *Store) RequestSOL(ipAddress, walletAddress string) (string, error) {
 	// Ensure IP hasn't already requested
-	hasRequested, err := s.HasRequested(ipAddress)
+	// hasRequested, err := s.HasRequested(ipAddress)
+	// if err != nil {
+	// 	return "", err
+	// }
+	// if hasRequested {
+	// 	return "", fmt.Errorf("you can only request SOL once every 24 hours")
+	// }
+
+	lastRequestTime, err := s.GetLastRequestTime(ipAddress)
 	if err != nil {
 		return "", err
 	}
-	if hasRequested {
-		return "", fmt.Errorf("you can only request SOL once every 24 hours")
+
+	if !lastRequestTime.IsZero() {
+		timeSinceLastRequest := time.Since(lastRequestTime)
+		if timeSinceLastRequest < 24*time.Hour {
+			nextAllowedTime := lastRequestTime.Add(24 * time.Hour)
+			formattedTime := nextAllowedTime.Format("January 2, 2006 at 3:04:05 PM")
+			return "", fmt.Errorf("you can request SOL again on %s", formattedTime)
+		}
 	}
 
 	// Send SOL transaction
