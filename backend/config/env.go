@@ -20,6 +20,7 @@ type Config struct {
 	JWTSecret               string
 	FundingWalletPrivateKey string
 	SOLTransactionLamports  uint64
+	RecaptchaSecretKey      string
 }
 
 var Envs = initConfig()
@@ -37,10 +38,11 @@ func initConfig() Config {
 		DBPassword:              getEnv("DB_PASSWORD", ""),
 		DBAddress:               fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
 		DBName:                  getEnv("DB_NAME", "solana-faucet-api"),
-		JWTSecret:               getEnv("JWT_SECRET", "not-secret-secret-anymore?"),
+		JWTSecret:               getEnv("JWT_SECRET", "not-secret-anymore?"),
 		JWTExpirationInSeconds:  getEnvAsInt("JWT_EXP", 3600*24*7),
 		FundingWalletPrivateKey: getEnv("FUNDING_WALLET_PRIVATE_KEY", "............."),
 		SOLTransactionLamports:  getEnvAsUint64("SOL_TRANSACTION_LAMPORTS", 100000), // Default to 100,000 lamports (0.0001 SOL)
+		RecaptchaSecretKey:      getEnv("RECAPTCHA_SECRET_KEY", "not-secret-anymore?"),
 	}
 }
 

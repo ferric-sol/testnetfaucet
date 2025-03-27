@@ -8,7 +8,8 @@ type FaucetRequestStore interface {
 }
 
 type FaucetRequestPayload struct {
-	WalletAddress string `json:"walletAddress" validate:"required"`
+	WalletAddress  string `json:"walletAddress" validate:"required"`
+	RecaptchaToken string `json:"recaptchaToken" validate:"required"`
 }
 
 type FaucetRequest struct {
@@ -18,4 +19,11 @@ type FaucetRequest struct {
 	Amount        int       `json:"amount"`
 	TXHash        string    `json:"tx_hash"`
 	CreatedAt     time.Time `json:"created_at"`
+}
+
+type RecaptchaResponse struct {
+	Success     bool     `json:"success"`
+	ChallengeTs string   `json:"challenge_ts"`
+	Hostname    string   `json:"hostname"`
+	ErrorCodes  []string `json:"error-codes,omitempty"`
 }

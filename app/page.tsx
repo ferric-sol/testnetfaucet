@@ -2,19 +2,24 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import airdrop from "@/app/airdrop"
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Home() {
   const faucetAddress = process.env.NEXT_PUBLIC_FAUCET_ADDRESS;
   const airdropAmount = process.env.NEXT_PUBLIC_AIRDROP_AMOUNT;
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""; 
+
   const [airdropResult, setAirdropResult] = useState('');
-  const [faucetBalance, setFaucetBalance] = useState('');
+  const [faucetBalance, setFaucetBalance] = useState('MOCK_FAUCET_BALANCE');
   const [faucetEmpty, setFaucetEmpty] = useState(false);
   const [address, setAddress] = useState('');
   const [isValid, setIsValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
 
   const validateSolanaAddress = useCallback((walletAddress: string) => {
     if (!walletAddress) {
@@ -45,10 +50,12 @@ export default function Home() {
     return () => clearTimeout(delayDebounceFn);
   }, [address, validateSolanaAddress]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isValid) return;
-
+  const onRecaptchaChange = async (token: string | null) => {
+    if (!token) {
+      setErrorMessage('reCAPTCHA verification failed. Please try again.');
+      return;
+    }
+    
     setIsLoading(true);
     setErrorMessage('');
     setAirdropResult('Processing...');
@@ -59,7 +66,7 @@ export default function Home() {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ walletAddress: address }),
+          body: JSON.stringify({ walletAddress: address, recaptchaToken: token }),
         }
       );
 
@@ -75,22 +82,31 @@ export default function Home() {
       setAirdropResult('');
     } finally {
       setIsLoading(false);
+      recaptchaRef?.current?.reset();
     }
   };
 
-  const getFaucetBalance = async () => {
-    if(!faucetAddress) return 'No faucet!';
-    const connection = new Connection(clusterApiUrl('testnet'), 'confirmed');
-    const faucetPublicKey = new PublicKey(faucetAddress);
-    const balanceInLamports = await connection.getBalance(faucetPublicKey);
-    const balanceInSol = balanceInLamports / LAMPORTS_PER_SOL;
-    if(parseInt(balanceInSol.toFixed(2)) < 2) setFaucetEmpty(true);
-    return balanceInSol.toFixed(2) + ' SOL';
-  }
+  // const getFaucetBalance = async () => {
+  //   if(!faucetAddress) return 'No faucet!';
+  //   const connection = new Connection(clusterApiUrl('testnet'), 'confirmed');
+  //   const faucetPublicKey = new PublicKey(faucetAddress);
+  //   const balanceInLamports = await connection.getBalance(faucetPublicKey);
+  //   const balanceInSol = balanceInLamports / LAMPORTS_PER_SOL;
+  //   if(parseInt(balanceInSol.toFixed(2)) < 2) setFaucetEmpty(true);
+  //   return balanceInSol.toFixed(2) + ' SOL';
+  // }
 
-  useEffect(() => {
-    getFaucetBalance().then(balance => setFaucetBalance(balance));
-  }, [airdropResult]);
+  // useEffect(() => {
+  //   getFaucetBalance().then(balance => setFaucetBalance(balance));
+  // }, [airdropResult]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid) return;
+
+    // Execute reCAPTCHA
+    recaptchaRef.current?.execute();
+  };
 
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-between p-4 lg:p-24">
@@ -134,6 +150,12 @@ export default function Home() {
             </button>
           </div>
           {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+          <ReCAPTCHA
+            sitekey={recaptchaSiteKey}
+            size="invisible"
+            ref={recaptchaRef}
+            onChange={onRecaptchaChange}
+          />
         </div>
         <p className="text-sm my-2">
           Send donation <strong>testnet</strong> sol to: {faucetAddress}

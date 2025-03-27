@@ -45,6 +45,13 @@ func (h *Handler) handleRequestSOL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Verify reCAPTCHA token
+	isValidRecaptcha := utils.VerifyRecaptchaToken(payload.RecaptchaToken, ipAddress)
+	if !isValidRecaptcha {
+		utils.WriteError(w, http.StatusForbidden, fmt.Errorf("reCAPTCHA verification failed"))
+		return
+	}
+
 	// Process the request
 	txHash, err := h.store.RequestSOL(ipAddress, payload.WalletAddress)
 	if err != nil {
