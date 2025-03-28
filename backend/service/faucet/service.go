@@ -133,3 +133,21 @@ func IsValidSolanaAddress(address string) bool {
 	_, err := solana.PublicKeyFromBase58(address)
 	return err == nil
 }
+
+// GetWalletBalance fetches the balance of a given Solana wallet address
+func GetWalletBalance(walletAddress string) (uint64, error) {
+	client := rpc.New(rpc.TestNet_RPC) // Use Solana Mainnet RPC
+
+	pubKey, err := solana.PublicKeyFromBase58(walletAddress)
+	if err != nil {
+		return 0, fmt.Errorf("invalid Solana wallet address: %v", err)
+	}
+
+	// Fetch balance with correct function signature
+	balance, err := client.GetBalance(context.Background(), pubKey, rpc.CommitmentFinalized)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get balance: %v", err)
+	}
+
+	return balance.Value, nil // Balance is returned in lamports
+}

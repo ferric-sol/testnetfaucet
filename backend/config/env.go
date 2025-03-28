@@ -19,6 +19,7 @@ type Config struct {
 	JWTExpirationInSeconds  int64
 	JWTSecret               string
 	FundingWalletPrivateKey string
+	FundingWalletPublicKey  string
 	SOLTransactionLamports  uint64
 	RecaptchaSecretKey      string
 }
@@ -41,6 +42,7 @@ func initConfig() Config {
 		JWTSecret:               getEnv("JWT_SECRET", "not-secret-anymore?"),
 		JWTExpirationInSeconds:  getEnvAsInt("JWT_EXP", 3600*24*7),
 		FundingWalletPrivateKey: getEnv("FUNDING_WALLET_PRIVATE_KEY", "............."),
+		FundingWalletPublicKey:  getEnv("FUNDING_WALLET_PUBLIC_KEY", "............."),
 		SOLTransactionLamports:  getEnvAsUint64("SOL_TRANSACTION_LAMPORTS", 100000), // Default to 100,000 lamports (0.0001 SOL)
 		RecaptchaSecretKey:      getEnv("RECAPTCHA_SECRET_KEY", "not-secret-anymore?"),
 	}

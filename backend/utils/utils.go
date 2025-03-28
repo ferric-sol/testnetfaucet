@@ -34,9 +34,6 @@ func WriteError(w http.ResponseWriter, status int, err error) {
 
 // VerifyRecaptchaToken sends the token to Google's reCAPTCHA verification API
 func VerifyRecaptchaToken(token, ip string) bool {
-
-	fmt.Println(token, ip)
-
 	secretKey := config.Envs.RecaptchaSecretKey
 	if secretKey == "" {
 		fmt.Println("RECAPTCHA_SECRET_KEY is not set")

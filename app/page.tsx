@@ -12,7 +12,7 @@ export default function Home() {
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""; 
 
   const [airdropResult, setAirdropResult] = useState('');
-  const [faucetBalance, setFaucetBalance] = useState('MOCK_FAUCET_BALANCE');
+  const [faucetBalance, setFaucetBalance] = useState(0);
   const [faucetEmpty, setFaucetEmpty] = useState(false);
   const [address, setAddress] = useState('');
   const [isValid, setIsValid] = useState(false);
@@ -61,22 +61,21 @@ export default function Home() {
     setAirdropResult('Processing...');
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/request`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ walletAddress: address, recaptchaToken: token }),
-        }
-      );
-
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ walletAddress: address, recaptchaToken: token }),
+      });
+  
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || 'Rate limit exceeded.');
       }
-
+  
       setAirdropResult(`Airdrop Successful! Transaction Hash: ${data.txHash}`);
       setAddress('');
+      
+      fetchFaucetBalance();
     } catch (error: any) {
       setErrorMessage(error.message || 'Airdrop failed. Please try again.');
       setAirdropResult('');
@@ -85,6 +84,30 @@ export default function Home() {
       recaptchaRef?.current?.reset();
     }
   };
+
+  const fetchFaucetBalance = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/balance`);
+      const data = await response.json();
+      
+      setFaucetBalance(data.balance);
+    } catch (error) {
+      console.error("Failed to fetch faucet balance:", error);
+    }
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid) return;
+
+    // Execute reCAPTCHA
+    recaptchaRef.current?.execute();
+  };
+
+  
+  useEffect(() => {
+    fetchFaucetBalance();
+  }, []);
 
   // const getFaucetBalance = async () => {
   //   if(!faucetAddress) return 'No faucet!';
@@ -99,14 +122,6 @@ export default function Home() {
   // useEffect(() => {
   //   getFaucetBalance().then(balance => setFaucetBalance(balance));
   // }, [airdropResult]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isValid) return;
-
-    // Execute reCAPTCHA
-    recaptchaRef.current?.execute();
-  };
 
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-between p-4 lg:p-24">
@@ -161,7 +176,8 @@ export default function Home() {
           Send donation <strong>testnet</strong> sol to: {faucetAddress}
         </p>
         <p className="text-sm my-2">
-          Current faucet balance is: {faucetBalance}
+          Current faucet balance is: 
+          {faucetBalance > 0 ? ` ${faucetBalance} SOL` : " (Low balance)" }
         </p>
         {airdropResult && (
           <p className={`text-sm my-2 ${airdropResult.includes('Successful') ? 'text-green-500' : ''}`}>

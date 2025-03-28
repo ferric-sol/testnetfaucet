@@ -26,21 +26,26 @@ func NewStore(db *sql.DB) *Store {
 // 	return count > 0, nil
 // }
 
+// Check if IP has requested SOL in the last 24 hours
 func (s *Store) GetLastRequestTime(ipAddress string) (time.Time, error) {
-	var lastRequestTime time.Time
+	var lastRequestTime *time.Time
 	err := s.db.QueryRow(
 		"SELECT MAX(created_at) FROM faucet_requests WHERE ip_address = ?",
 		ipAddress).Scan(&lastRequestTime)
 
 	if err != nil {
-		// If no previous request, return a zero time
 		if err == sql.ErrNoRows {
 			return time.Time{}, nil
 		}
 		return time.Time{}, err
 	}
 
-	return lastRequestTime, nil
+	// If lastRequestTime is nil (NULL in DB), return zero time
+	if lastRequestTime == nil {
+		return time.Time{}, nil
+	}
+
+	return *lastRequestTime, nil
 }
 
 // Insert a new faucet request
