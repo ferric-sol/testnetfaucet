@@ -1,37 +1,61 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
+# Global ignores
 .DS_Store
 *.pem
+*.log
+*.swp
 
-# debug
+# Node.js (React - Next.js)
+client/node_modules
+client/.pnp
+client.pnp.js
+client/.yarn/install-state.gz
+
+# Testing
+client/coverage
+
+# Next.js
+client/.next/
+client/out/
+
+# Production build
+client/build
+
+# Debugging logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
-.env*
+# Local environment variables
+client/.env*
+client/.env*.local
 
-# vercel
-.vercel
+# Vercel deployment
+client/.vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# TypeScript
+client/*.tsbuildinfo
+client/next-env.d.ts
+
+# Golang
+api/*.exe
+api/*.exe~
+api/*.dll
+api/*.so
+api/*.dylib
+
+# Test binaries
+api/*.test
+
+# Coverage output
+api/*.out
+
+# Go workspace files
+api/go.work
+api/go.work.sum
+
+# Environment variables
+api/.env
+api/.env*.local
+
+# Vendor directory (optional, remove the comment below to include it)
+# api/vendor/
