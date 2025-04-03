@@ -1,8 +1,7 @@
-package config
+package configs
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 
@@ -16,8 +15,8 @@ type Config struct {
 	DBPassword              string
 	DBAddress               string
 	DBName                  string
-	JWTExpirationInSeconds  int64
 	JWTSecret               string
+	JWTExpirationInSeconds  int64
 	FundingWalletPrivateKey string
 	FundingWalletPublicKey  string
 	SOLTransactionLamports  uint64
@@ -27,10 +26,7 @@ type Config struct {
 var Envs = initConfig()
 
 func initConfig() Config {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	godotenv.Load()
 
 	return Config{
 		PublicHost:              getEnv("PUBLIC_HOST", "http:"),

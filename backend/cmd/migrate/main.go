@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"os"
-	"solana-faucet-api/config"
+	"solana-faucet-api/configs"
 	"solana-faucet-api/db"
 
 	mysqlCfg "github.com/go-sql-driver/mysql"
@@ -13,11 +13,11 @@ import (
 )
 
 func main() {
-	db, err := db.NewMySQLStorage(mysqlCfg.Config{
-		User:                 config.Envs.DBUser,
-		Passwd:               config.Envs.DBPassword,
-		Addr:                 config.Envs.DBAddress,
-		DBName:               config.Envs.DBName,
+	database, err := db.NewMySQLStorage(mysqlCfg.Config{
+		User:                 configs.Envs.DBUser,
+		Passwd:               configs.Envs.DBPassword,
+		Addr:                 configs.Envs.DBAddress,
+		DBName:               configs.Envs.DBName,
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	driver, err := mysql.WithInstance(db, &mysql.Config{})
+	driver, err := mysql.WithInstance(database.DB, &mysql.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}

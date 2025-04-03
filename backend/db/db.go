@@ -2,16 +2,24 @@ package db
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/go-sql-driver/mysql"
 )
 
-func NewMySQLStorage(cfg mysql.Config) (*sql.DB, error) {
+type Database struct {
+	DB *sql.DB
+}
+
+func NewMySQLStorage(cfg mysql.Config) (*Database, error) {
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return db, nil
+	// Verify connection is working
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+
+	return &Database{DB: db}, nil
 }

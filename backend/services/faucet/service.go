@@ -3,10 +3,8 @@ package faucet
 import (
 	"context"
 	"fmt"
-	"net"
-	"net/http"
 	"os"
-	"solana-faucet-api/config"
+	"solana-faucet-api/configs"
 	"strings"
 
 	"github.com/gagliardetto/solana-go"
@@ -15,13 +13,14 @@ import (
 	confirm "github.com/gagliardetto/solana-go/rpc/sendAndConfirmTransaction"
 	"github.com/gagliardetto/solana-go/rpc/ws"
 	"github.com/gagliardetto/solana-go/text"
+	"github.com/gin-gonic/gin"
 )
 
-func GetClientIP(r *http.Request) string {
-	// 1. Check X-Forwarded-For (for proxies like Nginx, Cloudflare)
-	forwarded := r.Header.Get("X-Forwarded-For")
+// GetClientIP extracts the client's IP address in a Gin-based API
+func GetClientIP(c *gin.Context) string {
+	// 1. Check X-Forwarded-For (used by proxies like Cloudflare, Nginx)
+	forwarded := c.GetHeader("X-Forwarded-For")
 	if forwarded != "" {
-		// The header can contain multiple IPs (e.g., "client, proxy1, proxy2")
 		ips := strings.Split(forwarded, ",")
 		clientIP := strings.TrimSpace(ips[0]) // First IP is the original client
 		if clientIP != "" {
@@ -30,18 +29,13 @@ func GetClientIP(r *http.Request) string {
 	}
 
 	// 2. Check X-Real-IP (another common proxy header)
-	realIP := r.Header.Get("X-Real-IP")
+	realIP := c.GetHeader("X-Real-IP")
 	if realIP != "" {
 		return realIP
 	}
 
-	// 3. Fall back to RemoteAddr (direct connection)
-	ip, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		return r.RemoteAddr // Fallback if splitting fails
-	}
-
-	return ip
+	// 3. Fall back to Gin’s ClientIP() function
+	return c.ClientIP()
 }
 
 func SendSolanaTransaction(walletAddress string) (solana.Signature, error) {
@@ -55,7 +49,7 @@ func SendSolanaTransaction(walletAddress string) (solana.Signature, error) {
 	}
 
 	// Load the account that you will send funds FROM
-	accountFrom, err := solana.PrivateKeyFromBase58(config.Envs.FundingWalletPrivateKey)
+	accountFrom, err := solana.PrivateKeyFromBase58(configs.Envs.FundingWalletPrivateKey)
 	if err != nil {
 		panic(err)
 	}
@@ -81,14 +75,14 @@ func SendSolanaTransaction(walletAddress string) (solana.Signature, error) {
 	}
 
 	fmt.Println("recent blockhash", recent)
-	fmt.Println(config.Envs.SOLTransactionLamports)
+	fmt.Println(configs.Envs.SOLTransactionLamports)
 
 	tx, err := solana.NewTransaction(
 		[]solana.Instruction{
 			system.NewTransferInstruction(
 				// 1 sol = 1000000000 lamports
 				// 1e6, // 0.001 SOL,
-				config.Envs.SOLTransactionLamports,
+				configs.Envs.SOLTransactionLamports,
 				accountFrom.PublicKey(),
 				accountTo,
 			).Build(),

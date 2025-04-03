@@ -3,7 +3,7 @@ package faucet
 import (
 	"database/sql"
 	"fmt"
-	"solana-faucet-api/config"
+	"solana-faucet-api/configs"
 	"time"
 )
 
@@ -83,7 +83,7 @@ func (s *Store) RequestSOL(ipAddress, walletAddress string) (string, error) {
 	_, err = s.db.Exec("INSERT INTO faucet_requests (ip_address, wallet_address, lamports, tx_hash) VALUES (?,?,?,?)",
 		ipAddress,
 		walletAddress,
-		config.Envs.SOLTransactionLamports,
+		configs.Envs.SOLTransactionLamports,
 		txHash.String())
 	if err != nil {
 		return "", err
