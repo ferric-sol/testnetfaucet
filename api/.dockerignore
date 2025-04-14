@@ -1,0 +1,14 @@
+.git
+.env
+*.md
+Dockerfile
+docker-compose.yml
+# Except what's needed:
+!cmd/
+!pkg/
+!internal/
+!migrations/
+!*.go
+!go.mod
+!go.sum
+.DS_Store
