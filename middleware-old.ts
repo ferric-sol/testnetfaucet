@@ -14,16 +14,18 @@ export const config = {
 };
 
 export default async function middleware(request: NextRequest) {
+  // Get IP address from headers (Next.js 16 compatible)
+  const forwarded = request.headers.get('x-forwarded-for');
+  const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || '127.0.0.1';
+  
   if(request.method === 'GET') {
     // You could alternatively limit based on user ID or similar
-    const ip = request.ip ?? '127.0.0.1';
     await kv.incr(`ip_${ip}`);
     const request_num = await kv.get(`ip_${ip}`);
     console.log(`ip: ${ip} request_num: ${request_num}`);
-    NextResponse.next()
+    return NextResponse.next()
   } else {
     // You could alternatively limit based on user ID or similar
-    const ip = request.ip ?? '127.0.0.1';
     await kv.incr(`ip_${ip}`);
     const request_num = await kv.get(`ip_${ip}`);
     const { success, pending, limit, reset, remaining } = await ratelimit.limit(
