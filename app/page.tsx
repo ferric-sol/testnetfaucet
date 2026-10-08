@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import airdrop from "@/app/airdrop"
+import { StakewareBadge } from "@/app/components/StakewareBadge";
 import { useState, useEffect } from "react";
 import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair, sendAndConfirmTransaction } from '@solana/web3.js';
 
@@ -81,6 +82,9 @@ export default function Home() {
           Airdrop status: {airdropResult}
         </p>
       </form>
+      <div className="mt-8 flex justify-center">
+        <StakewareBadge source="testnetfaucet" />
+      </div>
       <footer className="self-stretch text-center font-mono text-sm mt-4">
         Other Testnet Faucets: &nbsp;        
         [<a href="https://solfaucet.com" target="_blank" rel="noopener noreferrer">SOLFaucet</a>]&nbsp;
