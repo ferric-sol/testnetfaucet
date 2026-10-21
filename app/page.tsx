@@ -98,6 +98,9 @@ export default function Home() {
         <p className="text-xs mt-2">
           Designed by <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer">ChatGPT</a>
         </p>
+        <p className="text-xs mt-2">
+          Supported by <a href="https://pumpdata.fun" target="_blank" rel="noopener">pumpdata.fun</a>
+        </p>
       </footer>
     </main>
 
